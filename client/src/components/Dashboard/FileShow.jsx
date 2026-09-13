@@ -66,14 +66,14 @@ const [filterStatus, setFilterStatus] = useState("");
   // };
 
   function handleShare(shortUrl) {
-  const frontendBaseUrl = window.location.origin; // Automatically picks http://localhost:5173 or your deployed domain
+  const frontendBaseUrl = window.location.origin;
   const fullUrl = `${frontendBaseUrl}${shortUrl}`;
 
   return {
-    whatsapp: `https://wa.me/?text=${encodeURIComponent("Download file: " + fullUrl)}`,
+    whatsapp: `https://wa.me/?text=${encodeURIComponent("Check out this file on PasteBox: " + fullUrl)}`,
+    telegram: `https://t.me/share/url?url=${encodeURIComponent(fullUrl)}&text=${encodeURIComponent("Check out this file on PasteBox!")}`,
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}`,
     twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(fullUrl)}&text=Check this out!`,
-    email: `mailto:?subject=Shared File&body=${encodeURIComponent("Here’s your file: " + fullUrl)}`,
     copy: fullUrl,
     qr: `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(fullUrl)}&size=150x150`
   };
@@ -507,47 +507,38 @@ const paginatedFiles = filteredFiles?.slice(
       Share "{shareFile?.name}"
     </h3>
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[var(--text-color)]">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[var(--text-color)]">
       <a
         href={handleShare(shareFile.shortUrl).whatsapp}
         target="_blank"
         rel="noreferrer"
-        className="flex items-center gap-3 p-4 border rounded hover:shadow transition"
+        className="flex items-center justify-center gap-3 p-4 border rounded hover:shadow transition"
       >
         <FaWhatsapp className="text-green-500 text-2xl" />
         <span className="font-semibold">WhatsApp</span>
       </a>
 
-      <a
-        href={handleShare(shareFile.shortUrl).instagram || "#"}
-        target="_blank"
-        rel="noreferrer"
-        className="flex items-center gap-3 p-4 border rounded hover:shadow transition"
+      <button
+        onClick={() => {
+          const url = handleShare(shareFile.shortUrl).copy;
+          navigator.clipboard.writeText(url);
+          toast.success("Link copied! Paste it in Instagram DM.");
+        }}
+        className="flex items-center justify-center gap-3 p-4 border rounded hover:shadow transition text-left"
       >
         <FaInstagram className="text-pink-500 text-2xl" />
         <span className="font-semibold">Instagram</span>
-      </a>
+      </button>
 
       <a
         href={handleShare(shareFile.shortUrl).telegram}
         target="_blank"
         rel="noreferrer"
-        className="flex items-center gap-3 p-4 border rounded hover:shadow transition"
+        className="flex items-center justify-center gap-3 p-4 border rounded hover:shadow transition"
       >
         <FaTelegramPlane className="text-blue-500 text-2xl" />
-        <span className="font-semibold ">Telegram</span>
+        <span className="font-semibold">Telegram</span>
       </a>
-
-      <a
-        href={handleShare(shareFile.shortUrl).email}
-        className="flex items-center gap-3 p-4 border rounded hover:shadow transition"
-      >
-        <FaEnvelope className="text-red-500 text-2xl" />
-        <span className="font-semibold">Email</span>
-      </a>
-      
-
-      
     </div>
 
     <div className="mt-6 text-center">
