@@ -106,7 +106,7 @@ const getUserById = async (req, res) => {
     let totalDownloads = 0;
 
     files.forEach((f) => {
-      totalDownloads += (f.downloadCount || 0);
+      totalDownloads += (f.downloadedContent || f.downloadCount || 0);
       const mime = f.type || '';
       if (mime.startsWith('image/')) {
         imageCount++;

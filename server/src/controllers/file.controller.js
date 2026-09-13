@@ -412,7 +412,7 @@ const deleteFile = async (req, res) => {
           let totalDownloads = 0;
 
           remainingFiles.forEach((f) => {
-            totalDownloads += (f.downloadCount || 0);
+            totalDownloads += (f.downloadedContent || f.downloadCount || 0);
             const mime = f.type || '';
             if (mime.startsWith('image/')) imageCount++;
             else if (mime.startsWith('video/')) videoCount++;
