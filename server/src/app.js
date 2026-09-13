@@ -8,10 +8,36 @@ dotenv.config();
 
 const app=express();
 
-app.use(cors({
-    origin:process.env.CLIENT_URL,
-    credentials:true
-}))
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:5173",
+  "http://localhost:3000",
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+
+      // If CLIENT_URL is '*', or origin is in allowed list, or ends with netlify.app / onrender.com
+      if (
+        process.env.CLIENT_URL === "*" ||
+        allowedOrigins.includes(origin) ||
+        allowedOrigins.includes(origin.replace(/\/$/, "")) ||
+        origin.endsWith(".netlify.app") ||
+        origin.endsWith(".onrender.com") ||
+        process.env.NODE_ENV !== "production"
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  })
+);
 
 app.use(cookieParser());
 
